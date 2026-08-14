@@ -205,26 +205,34 @@ fun AffirmationDetailScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-        ) {
-            Image(
-                painter = painterResource(affirmation.imageResourceId),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+        if (affirmation.type == AffirmationType.image || affirmation.type == AffirmationType.all) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp)
+            ) {
+                Image(
+                    painter = painterResource(affirmation.imageResourceId),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+
+        if (affirmation.type == AffirmationType.all) {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        if (affirmation.type == AffirmationType.text || affirmation.type == AffirmationType.all) {
+            Text(
+                text = stringResource(affirmation.stringResourceId),
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Text(
-            text = stringResource(affirmation.stringResourceId),
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         Text(
             text = "Type: ${affirmation.type.name.uppercase()}",
