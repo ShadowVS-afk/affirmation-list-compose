@@ -205,31 +205,52 @@ fun AffirmationDetailScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (affirmation.type == AffirmationType.image || affirmation.type == AffirmationType.all) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp)
-            ) {
-                Image(
-                    painter = painterResource(affirmation.imageResourceId),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+        when (affirmation.type) {
+            AffirmationType.text -> {
+                Text(
+                    text = stringResource(affirmation.stringResourceId),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
-        }
 
-        if (affirmation.type == AffirmationType.all) {
-            Spacer(modifier = Modifier.height(24.dp))
-        }
+            AffirmationType.image -> {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp)
+                ) {
+                    Image(
+                        painter = painterResource(affirmation.imageResourceId),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
 
-        if (affirmation.type == AffirmationType.text || affirmation.type == AffirmationType.all) {
-            Text(
-                text = stringResource(affirmation.stringResourceId),
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
+            AffirmationType.all -> {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp)
+                ) {
+                    Image(
+                        painter = painterResource(affirmation.imageResourceId),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = stringResource(affirmation.stringResourceId),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
