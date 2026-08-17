@@ -2,6 +2,7 @@ package com.example.naturuserinterface
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,9 +38,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.naturuserinterface.data.Datasource
 import com.example.naturuserinterface.model.Affirmation
@@ -55,14 +60,19 @@ enum class NatureScreen {
 fun NatureApp(
     navController: NavHostController = rememberNavController()
 ) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val canNavigateBack = remember(backStackEntry) {
+        navController.previousBackStackEntry != null
+    }
+
     Scaffold(
         topBar = {
             NatureTopAppBar(
-                canNavigateBack = navController.previousBackStackEntry != null,
+                canNavigateBack = canNavigateBack,
                 navigateUp = { navController.navigateUp() }
             )
         }
-    ) { innerPadding ->
+    ) { innerPadding: PaddingValues ->
         val affirmations = Datasource().loadAffirmation()
         
         NavHost(
@@ -79,12 +89,14 @@ fun NatureApp(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            composable(route = "${NatureScreen.Detail.name}/{affirmationId}") { backStackEntry ->
+            composable(route = "${NatureScreen.Detail.name}/{affirmationId}") { backStackEntry: NavBackStackEntry ->
                 val affirmationId = backStackEntry.arguments?.getString("affirmationId")?.toIntOrNull()
                 val selectedAffirmation = affirmations.find { it.stringResourceId == affirmationId }
                 
                 selectedAffirmation?.let {
-                    AffirmationDetailScreen(affirmation = it)
+                    AffirmationDetailScreen(
+                        affirmation = it
+                    )
                 }
             }
         }
@@ -123,7 +135,7 @@ fun AffirmationList(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
-        items(affirmationList) { affirmation ->
+        items(items = affirmationList) { affirmation: Affirmation ->
             AffirmationCard(
                 affirmation = affirmation,
                 onAffirmationClick = onAffirmationClick,
